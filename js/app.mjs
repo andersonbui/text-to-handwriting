@@ -87,7 +87,7 @@ const EVENT_MAP = {
   },
   '#font-file': {
     on: 'change',
-    action: (e) => addFontFromFile(e.target.files[0])
+    action: (e) => addFontFromFile(e.target.files)
   },
   '#ink-color': {
     on: 'change',

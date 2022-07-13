@@ -1,16 +1,23 @@
 const pageEl = document.querySelector('.page-a');
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+const fonts = []; // "Roboto", "Caveat", "serif"
 
-function addFontFromFile(fileObj) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const newFont = new FontFace('temp-font', e.target.result);
-    newFont.load().then((loadedFace) => {
-      document.fonts.add(loadedFace);
-      pageEl.style.fontFamily = 'temp-font';
-    });
-  };
-  reader.readAsArrayBuffer(fileObj);
+function addFontFromFile(files) {
+  // const fileObj = files[0];
+  for (let index = 0; index < files.length; index++) {
+    const unfile = files[index];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const nombreFont = 'temp-font' + index;
+      const newFont = new FontFace(nombreFont, e.target.result);
+      newFont.load().then((loadedFace) => {
+        document.fonts.add(loadedFace);
+        fonts[fonts.length] = nombreFont;
+        pageEl.style.fontFamily = nombreFont;
+      });
+    };
+    reader.readAsArrayBuffer(unfile);
+  }
 }
 
 /**
@@ -47,7 +54,22 @@ function formatText(event) {
   const text = event.clipboardData
     .getData('text/plain')
     .replace(/\n/g, '<br/>');
-  document.execCommand('insertHTML', false, text);
+  // const untext = "<span style=\"color:red;font-family: math; \">"+text+"</span>";
+  let nuevoTexto = text;
+  if (fonts.length > 0) {
+    nuevoTexto = '';
+    let font_index = 0;
+    for (let index = 0; index < text.length; index++) {
+      font_index = parseInt(Math.random() * fonts.length);
+      nuevoTexto +=
+        '<span style="font-family: ' +
+        fonts[font_index] +
+        '; ">' +
+        text.charAt(index) +
+        '</span>';
+    }
+  }
+  document.execCommand('insertHTML', false, nuevoTexto);
 }
 
 function addPaperFromFile(file) {
